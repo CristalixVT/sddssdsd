@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>♥ Un pequeño mundo para ti ♥</title>
+
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap');
+
+:root{
+  --black:#000;
+  --white:#fff;
+  --red:#ff1838;
+  --red2:#ff5268;
+  --blue:#244cff;
+  --darkblue:#071044;
+  --gray:#aaa;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:"Silkscreen","Courier New",monospace;
+  overflow-x:hidden;
+  cursor:default;
+}
+
+/* CRT / pixel ambience */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:999;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,.025) 0px,
+    rgba(255,255,255,.025) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  mix-blend-mode:screen;
+}
+
+#stars{
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  background:
+    radial-gradient(circle at 20% 25%,#222 0 1px,transparent 2px),
+    radial-gradient(circle at 70% 65%,#333 0 1px,transparent 2px),
+    radial-gradient(circle at 40% 80%,#222 0 1px,transparent 2px),
+    #000;
+  background-size:170px 170px,220px 220px,260px 260px,auto;
+  animation:starMove 20s linear infinite;
+}
+@keyframes starMove{to{background-position:0 170px,0 220px,0 260px,0 0}}
+
+#intro{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:30px;
+  transition:opacity .8s,transform .8s;
+}
+.intro-box{max-width:850px}
+.logo-heart{
+  font-family:"Press Start 2P",monospace;
+  color:var(--red);
+  font-size:clamp(55px,12vw,120px);
+  animation:heartBeat 1.1s infinite;
+  text-shadow:0 0 15px #ff002f;
+}
+@keyframes heartBeat{
+  0%,100%{transform:scale(1)}
+  15%{transform:scale(1.12)}
+  30%{transform:scale(1)}
+}
+.pixel-title{
+  font-family:"Press Start 2P",monospace;
+  font-size:clamp(18px,3vw,34px);
+  line-height:1.7;
+}
+.subtitle{
+  color:#bbb;
+  margin:28px auto;
+  line-height:2;
+  max-width:650px;
+}
+
+.pixel-button{
+  background:#000;
+  color:#fff;
+  border:3px solid #fff;
+  padding:16px 22px;
+  font:700 14px "Silkscreen",monospace;
+  cursor:pointer;
+  transition:.12s;
+}
+.pixel-button:hover{
+  color:#000;
+  background:#fff;
+  transform:translateY(-2px);
+}
+.pixel-button:active{transform:translateY(2px)}
+
+#site{display:none}
+.section{
+  min-height:100vh;
+  padding:80px 7vw;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.section:nth-child(even){background:linear-gradient(#000,#030303)}
+.section-inner{width:min(1050px,100%)}
+
+.chapter{
+  color:#888;
+  font-size:13px;
+  margin-bottom:18px;
+}
+.chapter::before{content:"★ ";color:#fff}
+
+h2{
+  font-family:"Press Start 2P",monospace;
+  font-size:clamp(19px,3.2vw,34px);
+  line-height:1.7;
+  margin:0 0 35px;
+}
+
+.dialogue{
+  border:3px solid #fff;
+  padding:28px 30px;
+  position:relative;
+  background:#000;
+  box-shadow:8px 8px 0 #fff;
+  margin-bottom:50px;
+}
+.dialogue::before{
+  content:"♥";
+  position:absolute;
+  left:18px;
+  top:-19px;
+  background:#000;
+  padding:0 8px;
+  color:var(--red);
+  font-size:22px;
+}
+.dialogue p{
+  line-height:2;
+  font-size:15px;
+  margin:0;
+}
+.dialogue .name{
+  color:var(--red);
+  margin-bottom:14px;
+  font-weight:bold;
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+}
+.photo{
+  min-height:260px;
+  border:3px solid #fff;
+  background:#090909;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  transition:.2s;
+}
+.photo:hover{
+  border-color:var(--red);
+  transform:translateY(-7px);
+  box-shadow:0 8px 0 var(--red);
+}
+.photo img{
+  width:100%;
+  height:100%;
+  min-height:260px;
+  object-fit:cover;
+  display:block;
+}
+.photo .placeholder{
+  text-align:center;
+  color:#666;
+  line-height:2;
+  padding:20px;
+}
+.photo .corner{
+  position:absolute;
+  top:8px;
+  left:10px;
+  color:#fff;
+  font-size:11px;
+  background:#000;
+  padding:4px 7px;
+}
+
+.nav{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  z-index:100;
+  border:2px solid #fff;
+  background:#000;
+  display:flex;
+  gap:5px;
+  padding:6px;
+}
+.nav button{
+  background:#000;
+  color:#aaa;
+  border:0;
+  padding:9px 11px;
+  font:12px "Silkscreen",monospace;
+  cursor:pointer;
+}
+.nav button:hover,.nav button.active{color:#fff}
+.nav button.active::before{content:"♥ ";color:var(--red)}
+
+.small-stars{
+  position:absolute;
+  font-family:monospace;
+  color:#777;
+  pointer-events:none;
+}
+.s1{top:12%;left:10%}.s2{top:22%;right:13%}.s3{bottom:18%;left:18%}.s4{bottom:28%;right:9%}
+
+/* ACT / battle panel */
+.battle-panel{
+  border:3px solid #fff;
+  padding:25px;
+  margin-top:35px;
+}
+.battle-menu{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.battle-menu button{
+  border:2px solid #fff;
+  background:#000;
+  color:#fff;
+  padding:14px 5px;
+  font:14px "Press Start 2P",monospace;
+  cursor:pointer;
+}
+.battle-menu button:hover{
+  color:#000;
+  background:#fff;
+}
+.battle-text{
+  min-height:75px;
+  border:2px solid #777;
+  margin-bottom:18px;
+  padding:16px;
+  line-height:1.8;
+  color:#ddd;
+}
+
+/* final heart section */
+#final{
+  min-height:120vh;
+  background:
+    radial-gradient(circle at center,rgba(70,0,10,.3),transparent 45%),
+    #000;
+  overflow:hidden;
+}
+.final-inner{text-align:center;width:min(900px,100%)}
+.final-heart-wrap{
+  display:flex;
+  justify-content:center;
+  margin-bottom:35px;
+}
+.final-heart{
+  width:100px;
+  height:100px;
+  position:relative;
+  transform:rotate(-45deg);
+  background:var(--red);
+  box-shadow:0 0 35px rgba(255,0,40,.55);
+  animation:finalHeart 1.2s infinite;
+}
+.final-heart:before,.final-heart:after{
+  content:"";
+  position:absolute;
+  width:100px;height:100px;
+  background:var(--red);
+  border-radius:50%;
+}
+.final-heart:before{top:-50px;left:0}
+.final-heart:after{left:50px;top:0}
+@keyframes finalHeart{
+  0%,100%{transform:rotate(-45deg) scale(1)}
+  50%{transform:rotate(-45deg) scale(1.08)}
+}
+.poem-box{
+  border:3px solid #fff;
+  padding:35px;
+  text-align:left;
+  line-height:2.2;
+  white-space:pre-line;
+  margin:35px auto;
+  max-width:780px;
+  box-shadow:8px 8px 0 var(--red);
+}
+.drawing{
+  max-width:min(80vw,650px);
+  max-height:650px;
+  display:block;
+  margin:35px auto;
+  border:3px solid #fff;
+  object-fit:contain;
+}
+.question{
+  font-family:"Press Start 2P",monospace;
+  font-size:clamp(14px,2vw,20px);
+  line-height:2;
+  max-width:800px;
+  margin:40px auto;
+}
+.answer-buttons{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
+}
+.answer{
+  min-width:150px;
+  font-family:"Press Start 2P",monospace;
+  padding:18px 25px;
+}
+.yes:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.no:hover{background:#fff;color:#000}
+
+/* Undertale-like ending */
+#whiteExplosion{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  z-index:5000;
+  opacity:0;
+  pointer-events:none;
+}
+.explode{
+  animation:explode 2.5s forwards;
+}
+@keyframes explode{
+  0%{opacity:0}
+  20%{opacity:1}
+  35%{opacity:1}
+  100%{opacity:0}
+}
+#endingText{
+  position:fixed;
+  inset:0;
+  z-index:5001;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:#000;
+  font-family:"Press Start 2P",monospace;
+  font-size:clamp(18px,4vw,42px);
+  line-height:2;
+  opacity:0;
+  pointer-events:none;
+}
+#endingText.show{animation:ending 5s forwards}
+@keyframes ending{
+  0%,45%{opacity:0}
+  60%,100%{opacity:1}
+}
+
+/* floating hearts */
+.float-heart{
+  position:fixed;
+  color:var(--red);
+  font-size:20px;
+  pointer-events:none;
+  z-index:3000;
+  animation:floatUp 1.3s forwards;
+}
+@keyframes floatUp{
+  from{opacity:1;transform:translateY(0) scale(.5)}
+  to{opacity:0;transform:translateY(-100px) scale(1.4)}
+}
+
+@media(max-width:700px){
+  .gallery{grid-template-columns:1fr}
+  .photo,.photo img{min-height:220px}
+  .battle-menu{grid-template-columns:repeat(2,1fr)}
+  .nav{max-width:95vw;overflow-x:auto}
+  .nav button{font-size:9px;padding:8px}
+  .section{padding:70px 5vw}
+}
+</style>
+</head>
+
+<body>
+<div id="stars"></div>
+<div id="whiteExplosion"></div>
+<div id="endingText">YOU FOUND<br>YOUR TRUE LOVE.</div>
+
+<audio id="music" loop src="assets/musica.mp3"></audio>
+<audio id="clickSound" src="assets/click.mp3"></audio>
+<audio id="yesSound" src="assets/si.mp3"></audio>
+<audio id="noSound" src="assets/no.mp3"></audio>
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="intro-box">
+    <div class="logo-heart">♥</div>
+    <div class="pixel-title">A SMALL WORLD<br>MADE FOR YOU</div>
+    <p class="subtitle">
+      Una pequeña aventura ha aparecido delante de ti.<br>
+      Tal vez no sea un mundo oscuro...<br>
+      pero guarda algo muy importante.
+    </p>
+    <button class="pixel-button" id="start">* CONTINUAR</button>
+  </div>
+</section>
+
+<main id="site">
+
+<!-- 1 -->
+<section class="section" id="s1">
+  <span class="small-stars s1">✦</span><span class="small-stars s2">· * ·</span>
+  <div class="section-inner">
+    <div class="chapter">CHAPTER 01 — THE BEGINNING</div>
+    <h2>THE RUINS</h2>
+    <div class="dialogue">
+      <div class="name">♥ UNA PEQUEÑA VOZ</div>
+      <p>
+        <!-- EDITA AQUI -->
+        Desde que llegaste, algunos lugares que antes parecían vacíos
+        empezaron a sentirse un poquito más bonitos.
+        Supongo que hay personas que aparecen sin avisar...
+        y terminan convirtiéndose en una parte especial de nuestra historia.
+      </p>
+    </div>
+    <div class="gallery">
+      <div class="photo">
+  <span class="corner">MEMORY 01</span>
+  <img src="fotos/seccion1-1.jpg" alt="Foto 1 de la sección 1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion1-1.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 02</span>
+  <img src="fotos/seccion1-2.jpg" alt="Foto 2 de la sección 1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion1-2.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 03</span>
+  <img src="fotos/seccion1-3.jpg" alt="Foto 3 de la sección 1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion1-3.jpg</div>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="section" id="s2">
+  <span class="small-stars s3">* · *</span><span class="small-stars s4">✦</span>
+  <div class="section-inner">
+    <div class="chapter">CHAPTER 02 — A COLD MEMORY</div>
+    <h2>SNOWDIN</h2>
+    <div class="dialogue">
+      <div class="name">♥ RECORD</div>
+      <p>
+        <!-- EDITA AQUI -->
+        Hay recuerdos que uno guarda como si fueran pequeños objetos
+        dentro del inventario. Y entre todos ellos, hay algunos que
+        uno nunca querría tirar.
+        Tú eres uno de esos recuerdos que quiero conservar.
+      </p>
+    </div>
+    <div class="gallery">
+      <div class="photo">
+  <span class="corner">MEMORY 04</span>
+  <img src="fotos/seccion2-1.jpg" alt="Foto 1 de la sección 2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion2-1.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 05</span>
+  <img src="fotos/seccion2-2.jpg" alt="Foto 2 de la sección 2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion2-2.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 06</span>
+  <img src="fotos/seccion2-3.jpg" alt="Foto 3 de la sección 2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion2-3.jpg</div>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="section" id="s3">
+  <div class="section-inner">
+    <div class="chapter">CHAPTER 03 — A PLACE TO CALL HOME</div>
+    <h2>HOME</h2>
+    <div class="dialogue">
+      <div class="name">♥ SUSPIRO</div>
+      <p>
+        <!-- EDITA AQUI -->
+        No necesito una aventura enorme para sentir que algo es especial.
+        A veces basta una conversación, una risa, una mirada o simplemente
+        saber que esa persona está ahí.
+        Gracias por formar parte de mis días.
+      </p>
+    </div>
+    <div class="gallery">
+      <div class="photo">
+  <span class="corner">MEMORY 07</span>
+  <img src="fotos/seccion3-1.jpg" alt="Foto 1 de la sección 3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion3-1.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 08</span>
+  <img src="fotos/seccion3-2.jpg" alt="Foto 2 de la sección 3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion3-2.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 09</span>
+  <img src="fotos/seccion3-3.jpg" alt="Foto 3 de la sección 3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion3-3.jpg</div>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="section" id="s4">
+  <div class="section-inner">
+    <div class="chapter">CHAPTER 04 — SOMETHING SPECIAL</div>
+    <h2>THE DARK WORLD</h2>
+    <div class="dialogue">
+      <div class="name">♥Cristalix NOTE</div>
+      <p>
+        <!-- EDITA AQUI -->
+        Quizá este pequeño mundo no tenga sentido para nadie más.
+        Pero lo hice pensando en ti.
+        Cada detalle y cada palabra que sale de mi corazón está aquí
+        porque quería encontrar una forma diferente de decirte
+        lo importante que eres para mí.
+      </p>
+    </div>
+    <div class="gallery">
+      <div class="photo">
+  <span class="corner">MEMORY 10</span>
+  <img src="fotos/seccion4-1.jpg" alt="Foto 1 de la sección 4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion4-1.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 11</span>
+  <img src="fotos/seccion4-2.jpg" alt="Foto 2 de la sección 4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion4-2.jpg</div>
+</div>
+      <div class="photo">
+  <span class="corner">MEMORY 12</span>
+  <img src="fotos/seccion4-3.jpg" alt="Foto 3 de la sección 4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+  <div class="placeholder" style="display:none">PON AQUI<br>seccion4-3.jpg</div>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="section" id="s5">
+  <div class="section-inner">
+    <div class="chapter">CHAPTER 05 — THE FINAL BATTLE</div>
+    <h2>THE CORE</h2>
+    <div class="dialogue">
+      <div class="name">♥ SOMETHING APPROACHES...</div>
+      <p>
+        <!-- EDITA AQUI -->
+        Si llegaste hasta aquí, ya no quiero esconderlo detrás de
+        metáforas ni de pequeñas pistas.
+        Hay algo que quiero decirte.
+        Pero antes... tendrás que entrar a la última zona.
+      </p>
+    </div>
+
+    <div class="battle-panel">
+      <div class="battle-text" id="battleText">
+        * El corazón late con fuerza.
+      </div>
+      <div class="battle-menu">
+        <button data-text="* Miras el recuerdo con cariño.">FIGHT</button>
+        <button data-text="* Piensas en todos los momentos bonitos.">ACT</button>
+        <button data-text="* Revisas tu inventario... está lleno de recuerdos.">ITEM</button>
+        <button data-text="* Decides no rendirte.">MERCY</button>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:50px">
+      <button class="pixel-button" onclick="go('final')">♥ ENTRAR AL CORAZÓN</button>
+    </div>
+  </div>
+</section>
+
+<!-- 6 FINAL -->
+<section class="section" id="final">
+  <div class="final-inner">
+    <div class="chapter">TRUE ENDING — THE SOUL</div>
+
+    <div class="final-heart-wrap">
+      <div class="final-heart"></div>
+    </div>
+
+    <h2>THE TRUE PACIFIST</h2>
+
+    <div class="dialogue">
+      <div class="name">♥ PARA TI</div>
+      <p>
+        Llegaste hasta el final.
+        Ahora ya no hay más habitaciones, más caminos ni más secretos.
+        Solo queda decir lo que realmente quería decirte.
+      </p>
+    </div>
+
+    <div class="poem-box">
+      Holiiii preciosaaaaa, wenas nosheees
+
+Espero que estes muy bieeeen, yo lo estoy, y muchooo, te preguntarás, ¿por qué? Por que el día de hoy me armé de valor para decirte todo esto que llevo dentro, para decirte lo mucho que te quiero, te aprecio, te adoro y te amo y WAAAAA, todo lo bonito de este mundo.
+
+De verdad eres de las cosas más bonitas que pudieron haber llegado a mi vida este año, y no podría estar más agradecido con la vida por haberme permitido encontrarte y tenerte cerquita de mi corazón. Eres la más bella, extraordinaria, excepcional, hermosa, preciosa y divina mujer de este mundo, y podría pasarme horas intentando encontrar palabras para describirte y aun así sentiría que me faltan miles.
+
+Eres taaaan cariñosa y taaaaaan linda conmigo que mi corazón sencillamente no puede estar más feliz con solo escucharte. Hay algo en tu voz, en tus palabras, en la manera en la que me tratas, que hace que todo se sienta un poquito más bonito. Probablemente ya lo sepas, pero nunca está de más dejar en claro lo que uno siente, porque hay sentimientos que merecen ser dichos aunque ya se hayan dicho mil veces.
+
+Y yo quiero que sepas que de verdad te amo. Te amo como no tienes idea. Amo cada parte de ti, incluso esas pequeñas cositas que quizá tú no notes, pero que yo sí veo y que hacen que me enamore de ti un poquito más cada día. Estoy sumamente enamorado de ti, me encantas, eres de lo más lindo que tengo en esta vida.
+
+Siempre logras tranquilizarme y dejarme en claro que yo soy tu niño, tuyo y de nadie más, y no sabes lo bonito y seguro que me haces sentir con eso. Solo tú consigues darme esa tranquilidad. Desde el primer momento dejaste las cosas claras conmigo y eso es algo que me gusta muchísimo de ti, porque contigo nunca he sentido que tenga que estar dudando de lo que somos o de lo que sentimos.
+
+Nos conocemos tanto y desde hace tanto tiempo... y creo que eso es una de las cosas que más bonitas se me hacen de nosotros. Hemos compartido tantas cosas, tantos momentos, tantas conversaciones, tantas pequeñas partes de nuestras vidas, que pensar en todo lo que hemos llegado a conocernos hace que me parezca todavía más difícil no quererte de esta manera.
+
+Es imposible no amar cada pedacito de ti.
+
+Y sencillamente ya no encuentro palabras suficientes para decirte cuánto te amo, cuánto te quiero y cuánto te aprecio, mi vida. Siento que podría escribir páginas enteras y aun así terminar diciendo lo mismo: que te amo, que me encantas y que quiero seguir compartiendo mi vida contigo.
+
+Me gustaría que algún día, cuando la distancia ya no exista entre nosotros, tú seas la mujer que pueda abrazar y ver todos los días. Quiero poder despertar sabiendo que estás cerquita, poder verte, abrazarte, hacerte reír, molestarte por cualquier tontería y simplemente disfrutar de tenerte a mi lado.
+
+Contigo quiero hacer las cosas bien. Quiero construir algo bonito, algo que podamos cuidar los dos, y algún día mirar hacia atrás y pensar en todo lo que tuvimos que recorrer para llegar hasta ahí. Quiero un futuro hermoso contigo, uno que no tenga que imaginar desde lejos, sino uno que podamos vivir juntitos.
+
+Y bueno... creo que ya me extendí muchísimo jeje peldon
+
+Pero quiero terminar esto diciéndote algo que quizá ya sabías, pero que hoy quiero decirte de la manera más sincera que puedo:
+
+Te amo.
+
+Me gustaría que fueras parte de mi vida.
+Aunque, siendo sincero... ya lo eres.
+
+Y quiero que sigas siendo parte de ella, quiero seguir teniendo tus risas, tus palabras, tus abrazos aunque por ahora sean a la distancia, tus momentos, tus días buenos y tus días no tan buenos.
+
+Pero ahora quiero preguntarte algo que llevo un buen rato queriendo preguntarte...
+    </div>
+
+    <!-- EDITA AQUI: cambia dibujo.png por el nombre de tu dibujo -->
+    <img class="drawing" src="assets/dibujo.png" alt="Dibujo para ti">
+
+    <div class="question">
+      me dejarias ser esa persona que te acompañe en tus sueños y esperanzas
+      hasta romper esta barrera de distancia y estar juntos por siempre?
+    </div>
+
+    <div class="answer-buttons">
+      <button class="pixel-button answer yes" id="yes">♥ SÍ</button>
+      <button class="pixel-button answer no" id="no">♥ NO</button>
+    </div>
+
+    <p style="color:#666;margin-top:35px;line-height:2">
+      * Tu elección tendra consecuensias en este mundo.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<nav class="nav" id="nav">
+  <button data-go="s1">01</button>
+  <button data-go="s2">02</button>
+  <button data-go="s3">03</button>
+  <button data-go="s4">04</button>
+  <button data-go="s5">05</button>
+  <button data-go="final">♥</button>
+</nav>
+
+<script>
+const music = document.getElementById("music");
+const clickSound = document.getElementById("clickSound");
+const yesSound = document.getElementById("yesSound");
+const noSound = document.getElementById("noSound");
+
+function playClick(){
+  clickSound.currentTime=0;
+  clickSound.play().catch(()=>{});
+}
+
+function go(id){
+  playClick();
+  document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+document.getElementById("start").addEventListener("click",()=>{
+  playClick();
+  music.volume=.25;
+  music.play().catch(()=>{});
+  const intro=document.getElementById("intro");
+  intro.style.opacity="0";
+  intro.style.transform="scale(1.08)";
+  setTimeout(()=>{
+    intro.style.display="none";
+    document.getElementById("site").style.display="block";
+    go("s1");
+  },800);
+});
+
+document.querySelectorAll(".nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>go(btn.dataset.go));
+});
+
+document.querySelectorAll(".battle-menu button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    playClick();
+    document.getElementById("battleText").textContent=btn.dataset.text;
+    spawnHeart(btn);
+  });
+});
+
+function spawnHeart(origin){
+  const r=origin.getBoundingClientRect();
+  const h=document.createElement("div");
+  h.className="float-heart";
+  h.textContent="♥";
+  h.style.left=(r.left+r.width/2)+"px";
+  h.style.top=(r.top)+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),1400);
+}
+
+document.getElementById("yes").addEventListener("click",()=>{
+  yesSound.currentTime=0;
+  yesSound.play().catch(()=>{});
+  music.pause();
+  document.getElementById("whiteExplosion").classList.add("explode");
+  setTimeout(()=>document.getElementById("endingText").classList.add("show"),500);
+});
+
+document.getElementById("no").addEventListener("click",()=>{
+  noSound.currentTime=0;
+  noSound.play().catch(()=>{});
+  for(let i=0;i<3;i++) setTimeout(()=>spawnHeart(document.getElementById("no")),i*180);
+});
+
+const sections=[...document.querySelectorAll(".section")];
+const navButtons=[...document.querySelectorAll(".nav button")];
+
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const index=sections.indexOf(entry.target);
+      navButtons.forEach((b,i)=>b.classList.toggle("active",i===index));
+    }
+  });
+},{threshold:.55});
+sections.forEach(s=>observer.observe(s));
+
+/* Todos los botones reciben sonido de clic */
+document.querySelectorAll("button").forEach(b=>{
+  if(!b.id || !["start","yes","no"].includes(b.id)){
+    b.addEventListener("mousedown",playClick);
+  }
+});
+</script>
+</body>
+</html>
